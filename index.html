@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>DARKWEB PORTAL — Premium Access</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg: #05010a;
+      --panel: rgba(20, 10, 30, 0.7);
+      --line: rgba(255, 0, 127, 0.2);
+      --text: #f0f0ff;
+      --muted: #9a8fa8;
+      
+      /* NEON COLORS */
+      --pink: #ff007f;
+      --cyan: #00d2ff;
+      --purple: #7b2cbf;
+      --green: #00ff88;
+      --gold: #ffd700;
+      
+      --shadow: 0 20px 50px rgba(255, 0, 127, 0.15);
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; min-width: 320px; color: var(--text);
+      background: 
+        radial-gradient(circle at 15% 10%, rgba(255, 0, 127, 0.15), transparent 40rem),
+        radial-gradient(circle at 85% 40%, rgba(0, 210, 255, 0.12), transparent 40rem),
+        radial-gradient(circle at 50% 90%, rgba(123, 44, 191, 0.15), transparent 40rem),
+        var(--bg);
+      min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.15;
+      background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 40px 40px; mask-image: linear-gradient(to bottom, black, transparent 80%);
+      z-index: -1;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+
+    /* SVG UTILS */
+    .svg-icon { width: 16px; height: 16px; fill: currentColor; display: inline-block; vertical-align: middle; }
+    .svg-stroke { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ===== TOPBAR & TABS ===== */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5, 1, 10, 0.85); backdrop-filter: blur(20px);
+      padding: 15px 0;
+    }
+    .topbar-inner { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+    
+    .brand { display: flex; align-items: center; gap: 12px; width: 100%; justify-content: center; }
+    .brand-mark {
+      width: 40px; height: 40px; display: grid; place-items: center;
+      border-radius: 12px; background: linear-gradient(135deg, var(--pink), var(--purple));
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
+    }
+    .brand-mark svg { width: 24px; height: 24px; fill: #fff; }
+    .brand h1 { margin: 0; font-family: 'Orbitron', sans-serif; font-size: 18px; letter-spacing: 1.5px; color: #fff; }
+    .brand p { margin: 2px 0 0; font-size: 10px; letter-spacing: 2px; color: var(--cyan); font-weight: 700; text-transform: uppercase; }
+
+    .nav-tabs {
+      display: flex; gap: 10px; width: 100%; max-width: 600px; justify-content: center;
+    }
+    .nav-tab {
+      flex: 1; padding: 12px 10px; text-align: center; border-radius: 10px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+      color: var(--muted); font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+      transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+    .nav-tab svg { width: 18px; height: 18px; }
+    .nav-tab.active {
+      background: linear-gradient(135deg, rgba(255, 0, 127, 0.2), rgba(123, 44, 191, 0.2));
+      border-color: var(--pink); color: #fff; box-shadow: 0 0 15px rgba(255,0,127,0.2);
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    main { padding: 30px 0 80px; }
+    .view-section { display: none; animation: fadeIn 0.4s ease; }
+    .view-section.active { display: block; }
+
+    .section-header { text-align: center; margin-bottom: 25px; }
+    .section-header h2 { font-family: 'Orbitron', sans-serif; font-size: 24px; margin: 0 0 10px; background: linear-gradient(90deg, var(--cyan), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .section-header p { color: var(--muted); font-size: 13px; margin: 0; }
+
+    /* ===== PART 1: CC SHOP ===== */
+    .cc-video-container { width: 100%; max-width: 600px; margin: 0 auto 25px; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0, 210, 255, 0.15); }
+    .cc-video-container video { width: 100%; display: block; }
+
+    .shop-tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+    .shop-tab { background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--muted); padding: 8px 18px; border-radius: 30px; font-size: 11px; font-weight: 800; transition: 0.3s; }
+    .shop-tab.active { background: linear-gradient(135deg, var(--pink), var(--purple)); color: #fff; border-color: transparent; box-shadow: 0 0 15px rgba(255, 0, 127, 0.3); }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 20px; }
+    .cc-item { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 16px; transition: 0.3s; position: relative; overflow: hidden; }
+    .cc-item:hover { border-color: var(--cyan); box-shadow: 0 10px 30px rgba(0, 210, 255, 0.15); transform: translateY(-4px); }
+    
+    .visual-card { 
+      position: relative; width: 100%; aspect-ratio: 1.586/1; border-radius: 14px; 
+      background: linear-gradient(135deg, #1a0b2e 0%, #05010a 100%);
+      padding: 15px; display: flex; flex-direction: column; justify-content: space-between; 
+      border: 1px solid rgba(255,255,255,0.05); overflow: hidden;
+    }
+    .visual-card::before { content: ''; position: absolute; top: -50%; right: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(0, 210, 255, 0.1) 0%, transparent 50%); pointer-events: none; }
+    .vc-top { display: flex; justify-content: space-between; font-family: 'Orbitron', sans-serif; font-size: 10px; color: rgba(255,255,255,0.7); }
+    .vc-num { font-family: 'Orbitron', sans-serif; font-size: 17px; letter-spacing: 2px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); margin: 5px 0; }
+    .vc-bot { display: flex; justify-content: space-between; align-items: flex-end; font-size: 9px; color: var(--muted); font-family: 'Orbitron', sans-serif; }
+    .vc-holder { font-size: 10px; color: #fff; letter-spacing: 1px; margin-top: 2px; }
+    
+    .cc-info { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; }
+    .cc-brand { background: rgba(255, 0, 127, 0.15); color: var(--pink); padding: 5px 12px; border-radius: 8px; font-size: 10px; font-weight: 900; letter-spacing: 1px; }
+    .cc-bal { font-family: 'Orbitron', sans-serif; color: var(--green); font-weight: 900; font-size: 15px; text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+    
+    .buy-btn { 
+      width: 100%; height: 45px; background: linear-gradient(135deg, var(--pink), #ff0055); 
+      border: none; border-radius: 10px; color: #fff; font-weight: 800; font-size: 13px; letter-spacing: 1px; 
+      transition: 0.2s; box-shadow: 0 5px 15px rgba(255, 0, 127, 0.2);
+    }
+    .buy-btn:hover { filter: brightness(1.2); box-shadow: 0 8px 25px rgba(255, 0, 127, 0.4); }
+
+    /* ===== PART 2: FF UNBAN ===== */
+    .unban-container { max-width: 460px; margin: 0 auto; }
+    .glass-card {
+      position: relative; overflow: hidden; padding: 25px; 
+      border: 1px solid var(--line); border-radius: 24px;
+      background: linear-gradient(145deg, rgba(25, 10, 35, 0.9), rgba(10, 5, 15, 0.95));
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+    .card-head h3 { margin: 0; font-size: 18px; letter-spacing: -0.5px; color: #fff; }
+    .card-head span { display: block; color: var(--cyan); font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+    .secure-icon { width: 38px; height: 38px; border-radius: 12px; background: rgba(255, 0, 127, 0.1); border: 1px solid rgba(255, 0, 127, 0.3); display: grid; place-items: center; color: var(--pink); font-size: 16px; }
+    .secure-icon svg { width: 18px; height: 18px; }
+
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 6px; color: #b5b5bf; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+    .field-wrap { position: relative; }
+    input, select {
+      width: 100%; height: 46px; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+      padding: 0 16px; color: #fff; background: rgba(0,0,0,0.3); outline: none; transition: 0.3s;
+    }
+    input:focus, select:focus { border-color: var(--pink); box-shadow: 0 0 15px rgba(255, 0, 127, 0.2); background: rgba(255, 0, 127, 0.05); }
+    select { appearance: none; }
+    .select-wrap::after { content: "▼"; position: absolute; right: 16px; top: 16px; font-size: 10px; color: var(--cyan); pointer-events: none; }
+    
+    .action-btn {
+      position: absolute; right: 5px; top: 5px; height: 36px; padding: 0 14px;
+      border: none; border-radius: 8px; background: rgba(255, 0, 127, 0.2); color: var(--pink);
+      font-size: 11px; font-weight: 800; transition: 0.2s; display: flex; align-items: center; justify-content: center;
+    }
+    .action-btn:hover { background: var(--pink); color: #fff; }
+
+    /* Login Key SVG Styling */
+    .key-svg-wrap {
+      display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,0,127,0.1), transparent);
+    }
+    .key-svg-wrap svg { height: 22px; width: auto; fill: #fff; filter: drop-shadow(0 0 5px rgba(255,0,127,0.8)); }
+
+    .primary-btn {
+      width: 100%; height: 48px; border: 0; border-radius: 12px; font-weight: 900; font-size: 14px;
+      letter-spacing: 1px; transition: 0.3s; color: #fff;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      box-shadow: 0 10px 25px rgba(255, 0, 127, 0.3);
+    }
+    .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 35px rgba(255, 0, 127, 0.5); }
+
+    .reason-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .reason-option input { display: none; }
+    .reason-option label {
+      display: flex; align-items: center; justify-content: center; height: 46px; margin: 0;
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; background: rgba(255,255,255,0.03);
+      cursor: pointer; transition: 0.2s; font-size: 12px;
+    }
+    .reason-option input:checked + label { border-color: var(--pink); background: rgba(255, 0, 127, 0.15); color: #fff; box-shadow: 0 0 15px rgba(255, 0, 127, 0.2); }
+
+    /* Unban Payment Inline */
+    .amount-box { background: rgba(0,0,0,0.4); border: 1px solid var(--line); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 15px; }
+    .amount-box h4 { margin: 0 0 5px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+    .amount-box .price { font-family: 'Orbitron', sans-serif; font-size: 38px; font-weight: 900; color: #fff; margin: 0 0 10px; }
+    .timer { display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 0, 127, 0.1); color: var(--pink); padding: 6px 14px; border-radius: 30px; font-size: 13px; font-weight: 800; }
+
+    .qr-box { text-align: center; background: #fff; padding: 15px; border-radius: 16px; margin: 15px 0; }
+    .qr-box img { width: 180px; height: 180px; object-fit: contain; }
+    .upi-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 15px; }
+    .upi-row code { color: var(--cyan); font-weight: 800; font-size: 13px; }
+    .upi-row button { background: none; border: none; color: var(--pink); font-weight: 800; font-size: 11px; cursor: pointer; }
+    
+    .upi-pay-btn { width: 100%; height: 50px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--cyan), #0055ff); color: #fff; font-weight: 900; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 25px rgba(0, 210, 255, 0.3); }
+    .upi-pay-btn:hover { filter: brightness(1.1); }
+
+    /* ===== PART 3: PANEL STORE ===== */
+    .panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; max-width: 1100px; margin: 0 auto; }
+    .panel-card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 20px; overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column;
+    }
+    .panel-video { width: 100%; aspect-ratio: 16/9; background: #000; object-fit: cover; display: block; border-bottom: 1px solid var(--line); }
+    .panel-content { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    
+    .panel-title { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 15px; color: var(--gold); text-align: center; text-shadow: 0 0 15px rgba(255,215,0,0.4); display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .panel-title svg { width: 22px; height: 22px; fill: currentColor; }
+    
+    .panel-features { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; flex: 1; }
+    .feature-item { display: flex; align-items: flex-start; gap: 10px; color: #d0d0e0; font-size: 13px; }
+    .feature-item svg { width: 16px; height: 16px; fill: var(--cyan); flex-shrink: 0; margin-top: 2px; }
+    
+    .price-table { display: flex; flex-direction: column; gap: 8px; }
+    
+    /* For iPhone Panel */
+    .iphone-price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .iphone-price-item { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px; text-align: center; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px;}
+    .iphone-price-item span { color: var(--muted); font-weight: 600; display: flex; align-items: center; gap: 4px;}
+    .iphone-price-item span svg { width: 12px; height: 12px; fill: currentColor; }
+    .iphone-price-item b { color: var(--green); font-size: 14px; font-family: 'Orbitron', sans-serif; }
+
+    .price-row {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+      padding: 12px 15px; border-radius: 12px; transition: 0.2s;
+    }
+    .price-row:hover { border-color: var(--pink); background: rgba(255,0,127,0.05); }
+    .price-left { display: flex; flex-direction: column; gap: 4px; }
+    .price-days { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; color: #fff; }
+    .price-days svg { width: 16px; height: 16px; stroke: var(--pink); }
+    .price-amt { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 900; color: var(--green); }
+    .buy-svg-btn {
+      background: linear-gradient(135deg, var(--pink), var(--purple)); border: none;
+      padding: 8px 16px; border-radius: 8px; color: #fff; font-weight: 800; font-size: 11px;
+      display: flex; align-items: center; gap: 6px; transition: 0.2s;
+    }
+    .buy-svg-btn:hover { filter: brightness(1.2); transform: scale(1.05); }
+    .buy-svg-btn svg { width: 12px; height: 12px; fill: #fff; }
+
+    /* ===== MODAL ===== */
+    .modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(5,1,10,0.9); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+    .modal-box { background: linear-gradient(145deg, #1a0b2e, #05010a); border: 1px solid var(--cyan); border-radius: 20px; width: 100%; max-width: 400px; padding: 25px; position: relative; box-shadow: 0 0 50px rgba(0, 210, 255, 0.2); }
+    .modal-close { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.05); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
+    .modal-close:hover { background: var(--pink); }
+    .modal-close svg { width: 14px; height: 14px; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    .toast { position: fixed; z-index: 10000; left: 50%; bottom: 30px; transform: translate(-50%, 100px); padding: 12px 24px; border-radius: 30px; color: #fff; background: linear-gradient(135deg, var(--pink), var(--purple)); font-size: 13px; font-weight: 800; box-shadow: 0 10px 30px rgba(255, 0, 127, 0.4); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+    .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+    @media (max-width: 520px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .nav-tab { font-size: 10px; padding: 10px 5px; }
+      .nav-tab svg { width: 14px; height: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">
+          <!-- DARKWEB LOGO SVG -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 15l-4-2v4l4 2 4-2v-4l-4 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h1>DARKWEB PORTAL</h1>
+          <p>Premium Multi-Access</p>
+        </div>
+      </div>
+      
+      <!-- 3 Line Navigation -->
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchTab('cc', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          CC SHOP
+        </button>
+        <button class="nav-tab" onclick="switchTab('unban', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          FF UNBAN
+        </button>
+        <button class="nav-tab" onclick="switchTab('panel', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          PANEL STORE
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    
+    <!-- ================= 1. CC SHOP ================= -->
+    <section class="view-section active" id="view-cc">
+      <div class="section-header">
+        <h2>PREMIUM CC SHOP</h2>
+        <p>High Balance Cards • Starts from ₹400</p>
+      </div>
+
+      <div class="cc-video-container">
+        <video src="https://www.image2url.com/r2/default/videos/1794649819777-fabf1f14-7cd2-4d5a-88bf-2b8430a45de2.mp4" controls autoplay loop muted playsinline></video>
+      </div>
+
+      <div class="shop-tabs">
+        <button class="shop-tab active" onclick="filterShop('ALL', this)">ALL ITEMS</button>
+        <button class="shop-tab" onclick="filterShop('VISA', this)">VISA</button>
+        <button class="shop-tab" onclick="filterShop('MASTERCARD', this)">MASTERCARD</button>
+        <button class="shop-tab" onclick="filterShop('RUPAY', this)">RUPAY</button>
+        <button class="shop-tab" onclick="filterShop('REDEEM', this)">REDEEM CODES</button>
+      </div>
+
+      <div class="cards-grid" id="shop-grid"></div>
+    </section>
+
+    <!-- ================= 2. FF UNBAN ================= -->
+    <section class="view-section" id="view-unban">
+      <div class="section-header">
+        <h2>FREE FIRE ID UNBAN</h2>
+        <p>Get instant unban access for your ID</p>
+      </div>
+
+      <div class="unban-container">
+        <!-- Step 1: Login -->
+        <div class="glass-card" id="unban-login">
+          <div class="card-head">
+            <div><span>SECURE ACCESS</span><h3>Login to continue</h3></div>
+            <div class="secure-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+          </div>
+          <form id="loginForm">
+            <div class="form-group">
+              <label>Login Key</label>
+              <div class="field-wrap" style="background:#05010a; border:1px solid rgba(255,0,127,0.3); border-radius:12px; height:46px; display:flex; align-items:center; justify-content:center;">
+                <!-- UNBAN NOW SVG -->
+                <div class="key-svg-wrap">
+                  <svg viewBox="0 0 240 40" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#ff007f;stop-opacity:1" />
+                      </linearGradient>
+                    </defs>
+                    <text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="Orbitron, sans-serif" font-size="22" font-weight="900" fill="url(#goldGrad)" letter-spacing="4">UNBAN NOW</text>
+                    <path d="M 20 20 L 50 20 M 190 20 L 220 20" stroke="#ffd700" stroke-width="2" stroke-dasharray="4 4" opacity="0.5" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="primary-btn">LOGIN NOW</button>
+          </form>
+        </div>
+
+        <!-- Step 2: Details -->
+        <div class="glass-card" id="unban-details" style="display: none;">
+          <div class="card-head">
+            <div><span>STEP 1</span><h3>Account Details</h3></div>
+            <div class="secure-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><circle cx="16" cy="12" r="2"/></svg>
+            </div>
+          </div>
+          <form id="detailsForm">
+            <div class="form-group">
+              <label>Select Game</label>
+              <div class="field-wrap select-wrap">
+                <select id="game">
+                  <option value="Free Fire">Free Fire</option>
+                  <option value="BGMI">BGMI</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Player UID (Numbers Only)</label>
+              <input type="text" id="uid" placeholder="Enter numeric UID" required />
+            </div>
+            <div class="form-group">
+              <label>Reason for Unban</label>
+              <div class="reason-grid">
+                <div class="reason-option">
+                  <input type="radio" id="r1" name="reason" value="USE H4CK" checked />
+                  <label for="r1">USE H4CK</label>
+                </div>
+                <div class="reason-option">
+                  <input type="radio" id="r2" name="reason" value="OPEN ID TO BAN" />
+                  <label for="r2">OPEN ID TO BAN</label>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="primary-btn">PROCEED TO PAY</button>
+          </form>
+        </div>
+
+        <!-- Step 3: Payment -->
+        <div class="glass-card" id="unban-payment" style="display: none;">
+          <div class="amount-box">
+            <h4>UNBAN VERIFICATION</h4>
+            <div class="price">₹500</div>
+            <div class="timer">
+              <svg class="svg-icon svg-stroke" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--pink);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span id="timerText">05:00</span>
+            </div>
+          </div>
+          
+          <div class="qr-box">
+            <img src="https://i.postimg.cc/tTy1xBwx/IMG-20261115-205407-856.jpg" alt="Unban QR">
+          </div>
+          <div class="upi-row">
+            <code>6294947557@naviaxis</code>
+            <button onclick="copyText('6294947557@naviaxis', 'UPI ID Copied!')">COPY</button>
+          </div>
+          <button class="upi-pay-btn" onclick="openUPI('6294947557@naviaxis', '500', 'Unban')">
+            <svg class="svg-icon svg-stroke" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> PAY WITH UPI
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 3. PANEL STORE ================= -->
+    <section class="view-section" id="view-panel">
+      <div class="section-header">
+        <h2>PREMIUM PANEL STORE</h2>
+        <p>Exclusive Gaming Configs & Panels</p>
+      </div>
+
+      <div class="panel-grid">
+        
+        <!-- Panel 1: OB55 -->
+        <div class="panel-card">
+          <video src="https://www.image2url.com/r2/default/videos/1794648727021-773aeeec-a709-4e98-8b6e-6afae63789bf.mp4" controls autoplay loop muted playsinline class="panel-video"></video>
+          <div class="panel-content">
+            <div class="panel-title">
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              OB 55 UPDATE
+            </div>
+            <div class="panel-features">
+              <div class="feature-item">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <span>AUTO HS+ CONFIG FILE</span>
+              </div>
+              <div class="feature-item">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <span>95% Drag Headshot</span>
+              </div>
+              <div class="feature-item">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <span>Auto Aimlock Accuracy</span>
+              </div>
+              <div class="feature-item">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <span>Aimbot + Aimlock</span>
+              </div>
+              <div class="feature-item">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                <span>MAIN ID SAFE</span>
+              </div>
+              <div class="feature-item">
+                <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+                <span>All Android Mobile Work</span>
+              </div>
+            </div>
+            
+            <div class="price-table">
+              <div class="price-row">
+                <div class="price-left">
+                  <div class="price-days">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 7 Days
+                  </div>
+                  <div class="price-amt">₹350</div>
+                </div>
+                <button class="buy-svg-btn" onclick="openPaymentModal('OB55 7 Days', 350)">
+                  <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg> BUY
+                </button>
+              </div>
+              <div class="price-row">
+                <div class="price-left">
+                  <div class="price-days">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 15 Days
+                  </div>
+                  <div class="price-amt">₹450</div>
+                </div>
+                <button class="buy-svg-btn" onclick="openPaymentModal('OB55 15 Days', 450)">
+                  <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg> BUY
+                </button>
+              </div>
+              <div class="price-row">
+                <div class="price-left">
+                  <div class="price-days">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 30 Days
+                  </div>
+                  <div class="price-amt">₹650</div>
+                </div>
+                <button class="buy-svg-btn" onclick="openPaymentModal('OB55 30 Days', 650)">
+                  <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg> BUY
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: PREMIUM PANEL -->
+        <div class="panel-card">
+          <video src="https://www.image2url.com/r2/default/videos/1794649099496-3b760506-5c57-4b85-90d8-c5a2450043dd.mp4" controls autoplay loop muted playsinline class="panel-video"></video>
+          <div class="panel-content">
+            <div class="panel-title">
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              PREMIUM PANEL
+            </div>
+            <div class="panel-features">
+              <div class="feature-item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>AimBot Vip</span></div>
+              <div class="feature-item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>AimSilent</span></div>
+              <div class="feature-item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>Snipers Aimlock</span></div>
+              <div class="feature-item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>Speed Run</span></div>
+              <div class="feature-item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>Esp Player Location</span></div>
+              <div class="feature-item"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg><span>MAIN ID SAFE</span></div>
+            </div>
+            
+            <div class="price-table">
+              <div class="price-row">
+                <div class="price-left">
+                  <div class="price-days"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 12 Days</div>
+                  <div class="price-amt">₹450</div>
+                </div>
+                <button class="buy-svg-btn" onclick="openPaymentModal('Premium Panel 12 Days', 450)"><svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg> BUY</button>
+              </div>
+              <div class="price-row">
+                <div class="price-left">
+                  <div class="price-days"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 1 Month</div>
+                  <div class="price-amt">₹950</div>
+                </div>
+                <button class="buy-svg-btn" onclick="openPaymentModal('Premium Panel 1 Month', 950)"><svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg> BUY</button>
+              </div>
+              <div class="price-row">
+                <div class="price-left">
+                  <div class="price-days"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Permanent</div>
+                  <div class="price-amt">₹1650</div>
+                </div>
+                <button class="buy-svg-btn" onclick="openPaymentModal('Premium Panel Permanent', 1650)"><svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg> BUY</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3: IPHONE IOS FF -->
+        <div class="panel-card">
+          <video src="https://www.image2url.com/r2/default/videos/1794650010504-c03250bf-1dc1-4a15-834e-6bf2abd5989b.mp4" controls autoplay loop muted playsinline class="panel-video"></video>
+          <div class="panel-content">
+            <div class="panel-title" style="color:var(--cyan); text-shadow:0 0 15px rgba(0,210,255,0.4);">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71,19.5C17.88,20.74 17,21.95 15.66,21.97C14.32,22 13.89,21.18 12.37,21.18C10.84,21.18 10.37,21.95 9.1,22C7.79,22.05 6.8,20.68 5.96,19.47C4.25,17 2.94,12.45 4.7,9.39C5.57,7.87 7.13,6.91 8.82,6.88C10.1,6.86 11.32,7.75 12.11,7.75C12.89,7.75 14.37,6.68 15.92,6.84C16.57,6.87 18.39,7.1 19.56,8.82C19.47,8.88 17.39,10.1 17.41,12.63C17.44,15.65 20.06,16.66 20.09,16.67C20.06,16.74 19.67,18.11 18.71,19.5M13,3.5C13.73,2.67 14.94,2.04 15.94,2C16.07,3.17 15.6,4.35 14.9,5.19C14.21,6.04 13.07,6.7 11.95,6.61C11.8,5.46 12.36,4.26 13,3.5Z" /></svg>
+              IPHONE IOS FF
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+              <p style="font-size: 12px; color: var(--muted); text-align: center; margin: 0 0 10px;">Select Server & Plan</p>
+              
+              <!-- 7 DAYS -->
+              <div style="font-weight: 800; color: #fff; font-size: 12px; margin-bottom: 5px;">7 DAYS PLANS</div>
+              <div class="iphone-price-grid">
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.6" fill="#f93"/><rect y="9.4" width="20" height="4.6" fill="#128807"/><circle cx="10" cy="7" r="1.5" fill="#000080"/></svg>
+                    Basic India
+                  </span>
+                  <b>₹400</b>
+                </div>
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.6" fill="#f93"/><rect y="9.4" width="20" height="4.6" fill="#128807"/><circle cx="10" cy="7" r="1.5" fill="#000080"/></svg>
+                    PRO India
+                  </span>
+                  <b>₹600</b>
+                </div>
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+                    Basic Others
+                  </span>
+                  <b>₹400</b>
+                </div>
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+                    PRO Others
+                  </span>
+                  <b>₹600</b>
+                </div>
+              </div>
+              <button class="primary-btn" style="height: 35px; font-size: 12px; margin-bottom: 12px;" onclick="openPaymentModal('iPhone 7 Days (Select Server)', 400)">BUY 7 DAYS (From ₹400)</button>
+
+              <!-- 15 DAYS -->
+              <div style="font-weight: 800; color: #fff; font-size: 12px; margin-bottom: 5px;">15 DAYS PLANS</div>
+              <div class="iphone-price-grid">
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.6" fill="#f93"/><rect y="9.4" width="20" height="4.6" fill="#128807"/><circle cx="10" cy="7" r="1.5" fill="#000080"/></svg>
+                    Basic India
+                  </span>
+                  <b>₹600</b>
+                </div>
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.6" fill="#f93"/><rect y="9.4" width="20" height="4.6" fill="#128807"/><circle cx="10" cy="7" r="1.5" fill="#000080"/></svg>
+                    PRO India
+                  </span>
+                  <b>₹900</b>
+                </div>
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+                    Basic Others
+                  </span>
+                  <b>₹600</b>
+                </div>
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+                    PRO Others
+                  </span>
+                  <b>₹900</b>
+                </div>
+              </div>
+              <button class="primary-btn" style="height: 35px; font-size: 12px; margin-bottom: 12px;" onclick="openPaymentModal('iPhone 15 Days (Select Server)', 600)">BUY 15 DAYS (From ₹600)</button>
+
+              <!-- 30 DAYS -->
+              <div style="font-weight: 800; color: #fff; font-size: 12px; margin-bottom: 5px;">30 DAYS PLANS</div>
+              <div class="iphone-price-grid">
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.6" fill="#f93"/><rect y="9.4" width="20" height="4.6" fill="#128807"/><circle cx="10" cy="7" r="1.5" fill="#000080"/></svg>
+                    Basic India
+                  </span>
+                  <b>₹800</b>
+                </div>
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#fff"/><rect width="20" height="4.6" fill="#f93"/><rect y="9.4" width="20" height="4.6" fill="#128807"/><circle cx="10" cy="7" r="1.5" fill="#000080"/></svg>
+                    PRO India
+                  </span>
+                  <b>₹1,200</b>
+                </div>
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+                    Basic Others
+                  </span>
+                  <b>₹800</b>
+                </div>
+                <div class="iphone-price-item">
+                  <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+                    PRO Others
+                  </span>
+                  <b>₹1,200</b>
+                </div>
+              </div>
+              <button class="primary-btn" style="height: 35px; font-size: 12px;" onclick="openPaymentModal('iPhone 30 Days (Select Server)', 800)">BUY 30 DAYS (From ₹800)</button>
+            </div>
+            
+          </div>
+        </div>
+        
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= UNIFIED PAYMENT MODAL ================= -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closePaymentModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      
+      <div style="text-align:center; margin-bottom:15px;">
+        <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:2px;">Amount to Pay</div>
+        <div style="font-family:'Orbitron'; font-size:40px; font-weight:900; color:var(--pink); text-shadow:0 0 20px rgba(255,0,127,0.4);" id="modal-price">₹0</div>
+        <div style="font-size:12px; color:var(--cyan); font-weight:800; letter-spacing:1px;" id="modal-title">Product Name</div>
+      </div>
+      
+      <div class="qr-box" style="margin: 15px 0;">
+        <img style="width: 180px; height: 180px;" src="https://i.postimg.cc/tTy1xBwx/IMG-20261115-205407-856.jpg" alt="Payment QR">
+      </div>
+      
+      <div class="upi-row">
+        <code>6294947557@naviaxis</code>
+        <button onclick="copyText('6294947557@naviaxis', 'UPI ID Copied!')">COPY</button>
+      </div>
+      
+      <button class="upi-pay-btn" onclick="payWithUPI()">
+        <svg class="svg-icon svg-stroke" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> PAY NOW
+      </button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Message</div>
+
+  <script>
+    // ================= GLOBAL UTILS =================
+    function copyText(text, msg) {
+      navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => {
+        const el = document.createElement('textarea');
+        el.value = text; document.body.appendChild(el); el.select();
+        document.execCommand('copy'); document.body.removeChild(el);
+        showToast(msg);
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    // ================= TAB SWITCHING =================
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('view-' + tabId).classList.add('active');
+      el.classList.add('active');
+    }
+
+    // ================= 1. CC SHOP LOGIC =================
+    const holders = ['SHIVAM K', 'ROHIT S', 'AMAN K', 'AARAV M', 'VIVEK P', 'DEEPAK M', 'ADITYA V'];
+    
+    // UPDATED: Starts from 400 and realistic slightly higher balances
+    const shopData = [
+      { type: 'VISA', price: 400, bal: '3,250' },
+      { type: 'MASTERCARD', price: 450, bal: '3,850' },
+      { type: 'RUPAY', price: 500, bal: '4,500' },
+      { type: 'REDEEM', price: 600, bal: '5,200' },
+      { type: 'VISA', price: 800, bal: '7,500' },
+      { type: 'MASTERCARD', price: 1000, bal: '9,800' },
+      { type: 'REDEEM', price: 1500, bal: '14,500' },
+      { type: 'VISA', price: 2000, bal: '19,000' }
+    ];
+
+    function renderShop() {
+      const grid = document.getElementById('shop-grid');
+      grid.innerHTML = '';
+      const fullData = [...shopData, ...shopData, ...shopData];
+      
+      fullData.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'cc-item';
+        div.dataset.type = item.type;
+        
+        const isRedeem = item.type === 'REDEEM';
+        const brandColor = isRedeem ? 'var(--cyan)' : 'var(--pink)';
+        const brandName = isRedeem ? 'DIGITAL CODE' : item.type;
+        
+        const cardNum = isRedeem ? 'XXXX-XXXX-XXXX-XXXX' : `4${Math.floor(1000+Math.random()*9000)} ${Math.floor(1000+Math.random()*9000)} ${Math.floor(1000+Math.random()*9000)}`;
+        const holder = holders[i % holders.length];
+        const exp = `0${Math.floor(1+Math.random()*9)}/2${Math.floor(5+Math.random()*4)}`;
+
+        div.innerHTML = `
+          <div class="visual-card">
+            <div class="vc-top">
+              <span>${isRedeem ? 'DIGITAL ACCESS' : 'PREMIUM CARD'}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;transform:rotate(90deg);"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            </div>
+            <div>
+               <div class="vc-num">${cardNum}</div>
+               ${isRedeem ? '' : `<div class="vc-holder">${holder}</div>`}
+            </div>
+            <div class="vc-bot"><span>VALID: ${isRedeem ? 'LIFETIME' : exp}</span><span style="font-weight:900;color:${brandColor};font-size:14px;">${brandName}</span></div>
+          </div>
+          <div class="cc-info">
+            <span class="cc-brand" style="color:${brandColor};background:${isRedeem?'rgba(0,210,255,.15)':'rgba(255,0,127,.15)'};">${item.type}</span>
+            <span class="cc-bal">BAL: ₹${item.bal}</span>
+          </div>
+          <button class="buy-btn" onclick="openPaymentModal('${brandName} (Bal: ₹${item.bal})', ${item.price})">BUY NOW | ₹${item.price}</button>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    function filterShop(type, btn) {
+      document.querySelectorAll('.shop-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.cc-item').forEach(item => {
+        item.style.display = (type === 'ALL' || item.dataset.type === type) ? 'block' : 'none';
+      });
+    }
+
+    // ================= 2. FF UNBAN LOGIC =================
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      document.getElementById('unban-login').style.display = 'none';
+      document.getElementById('unban-details').style.display = 'block';
+    });
+
+    document.getElementById('detailsForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const uid = document.getElementById('uid').value;
+      if(!uid || isNaN(uid)) return showToast('Please enter a valid numeric UID');
+      
+      document.getElementById('unban-details').style.display = 'none';
+      document.getElementById('unban-payment').style.display = 'block';
+      
+      let rem = 300;
+      const el = document.getElementById('timerText');
+      clearInterval(window.unbanTimer);
+      window.unbanTimer = setInterval(() => {
+        const m = String(Math.floor(rem / 60)).padStart(2, '0');
+        const s = String(rem % 60).padStart(2, '0');
+        el.textContent = `${m}:${s}`;
+        if(rem <= 0) { clearInterval(window.unbanTimer); el.textContent = "00:00"; }
+        rem--;
+      }, 1000);
+    });
+
+    // ================= UNIFIED PAYMENT MODAL LOGIC =================
+    let currentPayAmount = 0;
+    let currentPayTitle = '';
+
+    function openPaymentModal(title, price) {
+      currentPayAmount = price;
+      currentPayTitle = title;
+      
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-price').textContent = '₹' + price;
+      document.getElementById('payment-modal').classList.add('active');
+    }
+
+    function closePaymentModal() {
+      document.getElementById('payment-modal').classList.remove('active');
+    }
+
+    function payWithUPI() {
+      const pa = '6294947557@naviaxis';
+      const pn = 'Darkweb';
+      const tn = currentPayTitle;
+      // Normal UPI URL format
+      const upiLink = `upi://pay?pa=${pa}&pn=${pn}&am=${currentPayAmount}&cu=INR&tn=${tn}`;
+      window.location.href = upiLink;
+    }
+
+    function openUPI(pa, am, tn) {
+      // Normal UPI URL format for Inline Payment
+      window.location.href = `upi://pay?pa=${pa}&pn=Darkweb&am=${am}&cu=INR&tn=${tn}`;
+    }
+
+    // Init
+    renderShop();
+  </script>
+</body>
+</html>
